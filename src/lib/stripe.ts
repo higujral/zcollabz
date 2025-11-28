@@ -5,6 +5,6 @@ if (!process.env.STRIPE_SECRET_KEY) {
 }
 
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-    // Pin to a GA Stripe API version; avoid prerelease versions that can reject valid params
-    apiVersion: '2024-06-20',
+    // Pin to a GA Stripe API version; cast to satisfy Stripe’s TS union when SDK ships a newer prerelease tag
+    apiVersion: '2024-06-20' as any,
 });
