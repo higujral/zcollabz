@@ -1,36 +1,153 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# zcollabz - Payment Link Generator
 
-## Getting Started
+A Next.js application for generating Stripe payment links and tracking payments.
 
-First, run the development server:
+## Features
+
+- 🔗 Generate secure Stripe payment links
+- 💳 Track payment status (Pending/Paid)
+- 🎨 Modern glassmorphism UI design
+- 📊 Real-time transaction dashboard
+- 🔔 Automatic webhook integration
+
+## Tech Stack
+
+- **Framework**: Next.js 14 (App Router)
+- **Database**: PostgreSQL (Neon)
+- **ORM**: Prisma
+- **Payments**: Stripe
+- **Styling**: Tailwind CSS
+- **Hosting**: DigitalOcean App Platform
+
+## Setup Instructions
+
+### 1. Install Dependencies
+
+```bash
+npm install
+```
+
+### 2. Set Up Environment Variables
+
+Create a `.env` file in the root directory:
+
+```env
+# Database (Neon)
+DATABASE_URL="postgresql://user:password@host:5432/dbname"
+
+# Stripe
+STRIPE_SECRET_KEY="sk_test_..."
+STRIPE_WEBHOOK_SECRET="whsec_..."
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="pk_test_..."
+```
+
+### 3. Set Up Database
+
+Run Prisma migrations to create the database schema:
+
+```bash
+npx prisma migrate dev --name init
+npx prisma generate
+```
+
+### 4. Run Development Server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to see the application.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Stripe Webhook Setup
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Local Development
 
-## Learn More
+1. Install Stripe CLI: https://stripe.com/docs/stripe-cli
+2. Login to Stripe CLI:
+   ```bash
+   stripe login
+   ```
+3. Forward webhooks to your local server:
+   ```bash
+   stripe listen --forward-to localhost:3000/api/webhooks/stripe
+   ```
+4. Copy the webhook signing secret and add it to your `.env` file
 
-To learn more about Next.js, take a look at the following resources:
+### Production
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Go to Stripe Dashboard → Developers → Webhooks
+2. Add endpoint: `https://yourdomain.com/api/webhooks/stripe`
+3. Select event: `checkout.session.completed`
+4. Copy the webhook signing secret and add it to your environment variables
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Deployment to DigitalOcean
 
-## Deploy on Vercel
+### Prerequisites
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- DigitalOcean account
+- Neon database (free tier)
+- Stripe account
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Steps
+
+1. **Create Neon Database**
+   - Sign up at https://neon.tech
+   - Create a new project
+   - Copy the connection string
+
+2. **Deploy to DigitalOcean App Platform**
+   - Connect your GitHub repository
+   - Select "Web Service"
+   - Set environment variables:
+     - `DATABASE_URL`
+     - `STRIPE_SECRET_KEY`
+     - `STRIPE_WEBHOOK_SECRET`
+     - `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
+   - Deploy!
+
+3. **Run Database Migration**
+   - After deployment, run:
+     ```bash
+     npx prisma migrate deploy
+     ```
+
+4. **Configure Stripe Webhook**
+   - Add your production URL to Stripe webhooks
+   - Update `STRIPE_WEBHOOK_SECRET` with production secret
+
+## Usage
+
+1. Open the admin dashboard
+2. Fill in the form:
+   - Client Name
+   - Service Name
+   - Amount (USD)
+3. Click "Generate Payment Link"
+4. Copy the link and send it to your client
+5. Client pays via Stripe
+6. Transaction status automatically updates to "Paid"
+
+## Project Structure
+
+```
+zcollabz/
+├── src/
+│   ├── app/
+│   │   ├── api/
+│   │   │   ├── create-payment-link/
+│   │   │   ├── transactions/
+│   │   │   └── webhooks/stripe/
+│   │   ├── globals.css
+│   │   ├── layout.tsx
+│   │   └── page.tsx
+│   └── lib/
+│       ├── prisma.ts
+│       └── stripe.ts
+├── prisma/
+│   └── schema.prisma
+└── package.json
+```
+
+## License
+
+MIT
