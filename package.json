@@ -9,12 +9,19 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.684.0",
+    "@aws-sdk/s3-request-presigner": "^3.684.0",
     "@prisma/client": "^6.19.0",
     "dotenv-cli": "^11.0.0",
+    "iconv-lite": "^0.6.3",
     "next": "14.2.15",
+    "pdfkit": "^0.15.2",
+    "pdf-lib": "^1.17.1",
     "prisma": "^6.19.0",
+    "qrcode": "^1.5.4",
     "react": "^18",
     "react-dom": "^18",
+    "resend": "^4.0.0",
     "stripe": "^20.0.0"
   },
   "devDependencies": {

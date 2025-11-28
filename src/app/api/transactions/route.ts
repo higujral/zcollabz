@@ -7,6 +7,19 @@ export async function GET() {
             orderBy: {
                 createdAt: 'desc',
             },
+            include: {
+                invoice: {
+                    select: {
+                        id: true,
+                        invoiceNumber: true,
+                        clientEmail: true,
+                        pdfUrl: true,
+                        receiptPdfUrl: true,
+                        stripeReceiptUrl: true,
+                        status: true,
+                    },
+                },
+            },
         });
 
         return NextResponse.json({ transactions });
